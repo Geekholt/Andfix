@@ -1,3 +1,7 @@
+> 如需转载请评论或简信，并注明出处，未经允许不得转载
+
+![](https://upload-images.jianshu.io/upload_images/10992781-a64bd14d27699266.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 # 官网
 
 https://github.com/alibaba/AndFix
@@ -20,7 +24,9 @@ https://github.com/alibaba/AndFix
 
 比较前后两个apk包的不同，将存在不同的方法打上自定义注解，通过注解在运行时判断哪个方法需要被替换，这个是通过native方法进行替换的，所以从这个角度来说，Andfix的兼容性并不强。比如从过去的Dalvik变成ART，以后也有可能有新的虚拟机，就需要针对新的虚拟机运行时机制进行适配
 
-# 初始化Andfix
+# 集成步骤
+
+## 初始化Andfix
 
 1. 添加依赖
 
@@ -99,7 +105,7 @@ private String getPatchName() {
 }
 ```
 
-# 模拟Bug产生
+## 模拟Bug产生
 
 ```java
 public class Utils {
@@ -118,7 +124,7 @@ public class Utils {
 
 将apk通过`adb install`安装到手机上，验证该apk是存在bug的
 
-# 修复Bug
+## 修复Bug
 
 ```java
 public class Utils {
@@ -134,7 +140,7 @@ public class Utils {
 
 修复bug后，同样构建出一个修复bug后的apk，命名为**app-release-fixbug.apk**
 
-# 生成apatch文件
+## 生成apatch文件
 
 这里需要借助一个工具，可以到[官网](https://github.com/alibaba/AndFix)下载
 
@@ -188,7 +194,7 @@ usage: apkpatch -m <apatch_path...> -k <keystore> -p <***> -a <alias> -e <***>
 add modified Method:V  printLog()  in Class:Lcom/geekholt/andfix/Utils;
 ```
 
-# 安装apatch文件到手机
+## 安装apatch文件到手机
 
 在生产环境中，我们封装相应的网络请求，来将apatch安装到手机上的指定目录中。这里为了模拟方便，直接通过`adb push`命令把apatch文件安装到手机
 
