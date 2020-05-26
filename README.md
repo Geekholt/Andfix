@@ -12,7 +12,7 @@ https://github.com/alibaba/AndFix
 
 这里借助官方中的一张图，Andfix使用场景比较有限，**只能用于方法替换，不能进行类替换**。主要原理是通过方法替换，使得有bug的代码不能被执行到
 
-![principle](/Users/geekholt/Desktop/principle.png)
+![](https://upload-images.jianshu.io/upload_images/10992781-ef6224ff56a35f96.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 # 主要原理
 
@@ -86,6 +86,19 @@ public class App extends Application {
 }
 ```
 
+4. 加载patch文件，这里我们主动通过一个点击事件来触发patch文件的加载，实际开发中可以设计自己的特定时机进行apatch文件的加载
+
+```java
+public void fixBug(View view) {
+    AndFixPatchManager.getInstance().addPatch(getPatchName());
+}
+
+//构造patch文件名
+private String getPatchName() {
+    return mPatchDir.concat("fixbug").concat(".apatch");
+}
+```
+
 # 模拟Bug产生
 
 ```java
@@ -125,19 +138,20 @@ public class Utils {
 
 这里需要借助一个工具，可以到[官网](https://github.com/alibaba/AndFix)下载
 
-![image-20200526094555909](/Users/geekholt/Desktop/developtool.png)
+![](https://upload-images.jianshu.io/upload_images/10992781-f22c522f9a18fd26.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 下载解压后会出现三个文件
 
-![image-20200526171925026](/Users/geekholt/Desktop/解压后.png)
+![](https://upload-images.jianshu.io/upload_images/10992781-18ed3e4394f99caa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 将**app-release-bug.apk**、**app-release-fixbug.apk**、和apk签名文件**sign.jks**一起放到文件夹中，再创建一个output目录用于存放apkpatch文件，最终目录结构如下所示
 
-![image-20200526173346670](/Users/geekholt/Library/Application Support/typora-user-images/image-20200526173346670.png)
+![](https://upload-images.jianshu.io/upload_images/10992781-643210281201e877.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+
 
 `cd`进入该文件目录，通过`./apkpatch.sh`查看如何使用
 
-```vb
+```
 ➜  apkpatch-1.0.3 ./apkpatch.sh
 ApkPatch v1.0.3 - a tool for build/merge Android Patch file (.apatch).
 Copyright 2015 supern lee <sanping.li@alipay.com>
@@ -164,13 +178,13 @@ usage: apkpatch -m <apatch_path...> -k <keystore> -p <***> -a <alias> -e <***>
 
 使用命令构建apatch文件
 
-```vb
+```
 ./apkpatch.sh -f app-release-fixbug.apk -t app-release-bug.apk -o output/ -k sign.jks -p 12345678 -a sign_alias -e 12345678
 ```
 
 运行结果如下所示，提示我们printLog已经被修改，说明apatch文件构建成功。进入到output文件，可以看到apacth文件
 
-```vb
+```
 add modified Method:V  printLog()  in Class:Lcom/geekholt/andfix/Utils;
 ```
 
@@ -178,10 +192,11 @@ add modified Method:V  printLog()  in Class:Lcom/geekholt/andfix/Utils;
 
 在生产环境中，我们封装相应的网络请求，来将apatch安装到手机上的指定目录中。这里为了模拟方便，直接通过`adb push`命令把apatch文件安装到手机
 
-```vb
+```
 adb push /Users/geekholt/Desktop/apkpatch-1.0.3/output/app-release-fixbug-20b6ba47703502921f7649df39a7c5f7.apatch /storage/emulated/0/Android/data/com.geekholt.andfix/cache/apatch/fixbug.apatch
 ```
 
 点击修复bug，会执行`patchManager.addPatch`，完成bug修复
+
 
 
