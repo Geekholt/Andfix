@@ -12,7 +12,7 @@ https://github.com/alibaba/AndFix
 
 这里借助官方中的一张图，Andfix使用场景比较有限，**只能用于方法替换，不能进行类替换**。主要原理是通过方法替换，使得有bug的代码不能被执行到
 
-![principle](/Users/geekholt/Desktop/principle.png)
+![](http://gitlab.317hu.com/wuhaoteng/Andfix/blob/master/images/principle.png)
 
 # 主要原理
 
@@ -137,7 +137,7 @@ public class Utils {
 
 `cd`进入该文件目录，通过`./apkpatch.sh`查看如何使用
 
-```vb
+```
 ➜  apkpatch-1.0.3 ./apkpatch.sh
 ApkPatch v1.0.3 - a tool for build/merge Android Patch file (.apatch).
 Copyright 2015 supern lee <sanping.li@alipay.com>
@@ -164,13 +164,13 @@ usage: apkpatch -m <apatch_path...> -k <keystore> -p <***> -a <alias> -e <***>
 
 使用命令构建apatch文件
 
-```vb
+```
 ./apkpatch.sh -f app-release-fixbug.apk -t app-release-bug.apk -o output/ -k sign.jks -p 12345678 -a sign_alias -e 12345678
 ```
 
 运行结果如下所示，提示我们printLog已经被修改，说明apatch文件构建成功。进入到output文件，可以看到apacth文件
 
-```vb
+```
 add modified Method:V  printLog()  in Class:Lcom/geekholt/andfix/Utils;
 ```
 
@@ -178,7 +178,7 @@ add modified Method:V  printLog()  in Class:Lcom/geekholt/andfix/Utils;
 
 在生产环境中，我们封装相应的网络请求，来将apatch安装到手机上的指定目录中。这里为了模拟方便，直接通过`adb push`命令把apatch文件安装到手机
 
-```vb
+```
 adb push /Users/geekholt/Desktop/apkpatch-1.0.3/output/app-release-fixbug-20b6ba47703502921f7649df39a7c5f7.apatch /storage/emulated/0/Android/data/com.geekholt.andfix/cache/apatch/fixbug.apatch
 ```
 
