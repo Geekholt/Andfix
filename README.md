@@ -12,7 +12,7 @@ https://github.com/alibaba/AndFix
 
 这里借助官方中的一张图，Andfix使用场景比较有限，**只能用于方法替换，不能进行类替换**。主要原理是通过方法替换，使得有bug的代码不能被执行到
 
-![](https://upload-images.jianshu.io/upload_images/10992781-ef6224ff56a35f96.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![https://upload-images.jianshu.io/upload_images/10992781-ef6224ff56a35f96.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240](https://upload-images.jianshu.io/upload_images/10992781-ef6224ff56a35f96.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 # 主要原理
 
@@ -140,15 +140,15 @@ public class Utils {
 
 这里需要借助一个工具，可以到[官网](https://github.com/alibaba/AndFix)下载
 
-![](https://upload-images.jianshu.io/upload_images/10992781-f22c522f9a18fd26.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![https://upload-images.jianshu.io/upload_images/10992781-f22c522f9a18fd26.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240](https://upload-images.jianshu.io/upload_images/10992781-f22c522f9a18fd26.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 下载解压后会出现三个文件
 
-![](https://upload-images.jianshu.io/upload_images/10992781-18ed3e4394f99caa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![https://upload-images.jianshu.io/upload_images/10992781-18ed3e4394f99caa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240](https://upload-images.jianshu.io/upload_images/10992781-18ed3e4394f99caa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 将**app-release-bug.apk**、**app-release-fixbug.apk**、和apk签名文件**sign.jks**一起放到文件夹中，再创建一个output目录用于存放apkpatch文件，最终目录结构如下所示
 
-![](https://upload-images.jianshu.io/upload_images/10992781-643210281201e877.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![https://upload-images.jianshu.io/upload_images/10992781-643210281201e877.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240](https://upload-images.jianshu.io/upload_images/10992781-643210281201e877.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 
 `cd`进入该文件目录，通过`./apkpatch.sh`查看如何使用
