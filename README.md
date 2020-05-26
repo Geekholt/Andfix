@@ -1,7 +1,3 @@
-> 如需转载请评论或简信，并注明出处，未经允许不得转载
-
-![](https://upload-images.jianshu.io/upload_images/10992781-a64bd14d27699266.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
-
 # 官网
 
 https://github.com/alibaba/AndFix
