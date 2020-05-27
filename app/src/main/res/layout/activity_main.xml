@@ -10,19 +10,7 @@
         android:layout_height="50dp"
         android:gravity="center"
         android:onClick="createBug"
-        android:text="产生Bug"
+        android:text="打印日志"
         android:textColor="@android:color/black"
         android:textSize="23sp" />
-
-    <Button
-        android:id="@+id/clean_view"
-        android:layout_width="match_parent"
-        android:layout_height="50dp"
-        android:layout_below="@id/kill_view"
-        android:gravity="center"
-        android:onClick="fixBug"
-        android:text="修复Bug"
-        android:textColor="@android:color/black"
-        android:textSize="23sp" />
-
 </RelativeLayout>

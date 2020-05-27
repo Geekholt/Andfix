@@ -1,4 +1,4 @@
-package com.geekholt.andfix;
+package com.geekholt.andfix.util;
 
 import android.content.Context;
 import android.content.pm.PackageInfo;

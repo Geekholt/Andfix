@@ -55,7 +55,7 @@
 .method public static printLog()V
     .locals 2
     .annotation runtime Lcom/alipay/euler/andfix/annotation/MethodReplace;
-        clazz = "com.geekholt.andfix.Utils"
+        clazz = "com.geekholt.andfix.util.Utils"
         method = "printLog"
     .end annotation
 

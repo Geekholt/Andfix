@@ -1,8 +1,9 @@
-package com.geekholt.andfix;
+package com.geekholt.andfix.fix;
 
 import android.content.Context;
 
 import com.alipay.euler.andfix.patch.PatchManager;
+import com.geekholt.andfix.util.Utils;
 
 /**
  * @author 吴灏腾

@@ -2,6 +2,8 @@ package com.geekholt.andfix;
 
 import android.app.Application;
 
+import com.geekholt.andfix.fix.AndFixPatchManager;
+
 /**
  * @author 吴灏腾
  * @date 2020/5/26
