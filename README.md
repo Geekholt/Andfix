@@ -12,7 +12,7 @@ https://github.com/alibaba/AndFix
 
 这里借助官方中的一张图，Andfix使用场景比较有限，**只能用于方法替换，不能进行类替换**。主要原理是通过方法替换，使得有bug的代码不能被执行到
 
-![](https://upload-images.jianshu.io/upload_images/10992781-ef6224ff56a35f96.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![https://upload-images.jianshu.io/upload_images/10992781-ef6224ff56a35f96.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240](https://upload-images.jianshu.io/upload_images/10992781-ef6224ff56a35f96.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 # 主要原理
 
@@ -140,15 +140,15 @@ public class Utils {
 
 这里需要借助一个工具，可以到[官网](https://github.com/alibaba/AndFix)下载
 
-![](https://upload-images.jianshu.io/upload_images/10992781-f22c522f9a18fd26.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![https://upload-images.jianshu.io/upload_images/10992781-f22c522f9a18fd26.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240](https://upload-images.jianshu.io/upload_images/10992781-f22c522f9a18fd26.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 下载解压后会出现三个文件
 
-![](https://upload-images.jianshu.io/upload_images/10992781-18ed3e4394f99caa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![https://upload-images.jianshu.io/upload_images/10992781-18ed3e4394f99caa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240](https://upload-images.jianshu.io/upload_images/10992781-18ed3e4394f99caa.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 将**app-release-bug.apk**、**app-release-fixbug.apk**、和apk签名文件**sign.jks**一起放到文件夹中，再创建一个output目录用于存放apkpatch文件，最终目录结构如下所示
 
-![](https://upload-images.jianshu.io/upload_images/10992781-643210281201e877.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
+![https://upload-images.jianshu.io/upload_images/10992781-643210281201e877.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240](https://upload-images.jianshu.io/upload_images/10992781-643210281201e877.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)
 
 
 `cd`进入该文件目录，通过`./apkpatch.sh`查看如何使用
@@ -200,5 +200,141 @@ adb push /Users/geekholt/Desktop/apkpatch-1.0.3/output/app-release-fixbug-20b6ba
 
 点击修复bug，会执行`patchManager.addPatch`，完成bug修复
 
+# 生产环境下自动完成bug修复思路
+
+前面说的过程主要是对Andfix的能力进行一个测试，主要是通过adb push将patch安装到手机的指定目录中，再通过手动的方式加载apatch文件
+
+下面提供一个自动完成下载和安装apatch的思路，可以在`MainActivity`中启动`AndFixService`完成全过程
+
+```java
+/**
+ * @author 吴灏腾
+ * @date 2020/5/27
+ * @describe 修复bug服务，包括patch文件下载功能和patch文件加载功能
+ */
+public class AndFixService extends Service {
+    private static final String TAG = AndFixService.class.getSimpleName();
+    private static final String FILE_END = ".apatch";
+    private static final int UPDATE_PATCH = 0x02;
+    private static final int DOWNLOAD_PATCH = 0x01;
+
+    private BasePatch mBasePatchInfo;
+    //patch文件存放文件夹路径
+    private String mPatchFileDir;
+    //patch文件真实路径，mPatchFile = mPatchFileDir + System.currentTimeMillis() + .apatch
+    private String mPatchFile;
+    private Handler mHandler = new AndFixHandler(this);
+
+    private static class AndFixHandler extends Handler {
+        private final WeakReference<AndFixService> mService;
+
+        public AndFixHandler(AndFixService service) {
+            mService = new WeakReference<>(service);
+        }
+
+        @Override
+        public void handleMessage(@NonNull Message msg) {
+            if (mService.get() == null) {
+                return;
+            }
+            switch (msg.what) {
+                case UPDATE_PATCH:
+                    mService.get().checkPatchUpdate();
+                    break;
+                case DOWNLOAD_PATCH:
+                    mService.get().downloadPatch();
+                    break;
+            }
+        }
+    }
+
+    @Nullable
+    @Override
+    public IBinder onBind(Intent intent) {
+        return null;
+    }
+
+
+    @Override
+    public void onCreate() {
+        super.onCreate();
+        init();
+    }
+
+    @Override
+    public int onStartCommand(Intent intent, int flags, int startId) {
+        mHandler.sendEmptyMessage(UPDATE_PATCH);
+        return START_NOT_STICKY;
+    }
+
+    /**
+     * 完成文件目录的构造
+     */
+    private void init() {
+        mPatchFileDir = getExternalCacheDir().getAbsolutePath() + "/apatch/";
+        File patchDir = new File(mPatchFileDir);
+
+        try {
+            if (patchDir == null || !patchDir.exists()) {
+                patchDir.mkdir();
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            stopSelf();
+        }
+    }
+
+    /**
+     * 检查服务器是否有patch文件
+     */
+    private void checkPatchUpdate() {
+        RequestCenter.requestPatchUpdateInfo(new DisposeDataListener() {
+            @Override
+            public void onSuccess(Object responseObj) {
+                mBasePatchInfo = (BasePatch) responseObj;
+                ////不为空则表明有更新
+                if (!TextUtils.isEmpty(mBasePatchInfo.data.downloadUrl)) {
+                    //下载patch文件
+                    mHandler.sendEmptyMessage(DOWNLOAD_PATCH);
+                } else {
+                    stopSelf();
+                }
+            }
+
+            @Override
+            public void onFailure(Object reasonObj) {
+                stopSelf();
+            }
+        });
+    }
+
+    /**
+     * 完成patch文件的下载后，自动addPatch
+     */
+    private void downloadPatch() {
+        //初始化patch文件下载路径
+        mPatchFile = mPatchFileDir.concat(String.valueOf(System.currentTimeMillis())).concat(FILE_END);
+
+        RequestCenter.downloadFile(mBasePatchInfo.data.downloadUrl, mPatchFile,
+                new DisposeDownloadListener() {
+                    @Override
+                    public void onProgress(int progrss) {
+                        Log.d(TAG, "current progedss: " + progrss);
+                    }
+
+                    @Override
+                    public void onSuccess(Object responseObj) {
+                        //将我们下载好的patch文件添加到我们的andfix中
+                        AndFixPatchManager.getInstance().addPatch(mPatchFile);
+                    }
+
+                    @Override
+                    public void onFailure(Object reasonObj) {
+                        stopSelf();
+                    }
+                });
+    }
+}
+```
 
 
